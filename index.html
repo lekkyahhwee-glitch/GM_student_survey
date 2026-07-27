@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Spirit Snack Squad — Student Strengths Survey</title>
+<style>
+  :root{
+    --bg:#090611;
+    --panel:#151027;
+    --panel2:#1d1435;
+    --pink:#ff4fd8;
+    --cyan:#32e7ff;
+    --lime:#b6ff4a;
+    --gold:#ffd75e;
+    --purple:#8f5cff;
+    --text:#f7f3ff;
+    --muted:#c7bddc;
+    --danger:#ff6b81;
+    --shadow:0 0 24px rgba(255,79,216,.25);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    color:var(--text);
+    background:
+      radial-gradient(circle at 10% 10%, rgba(143,92,255,.22), transparent 30%),
+      radial-gradient(circle at 90% 20%, rgba(50,231,255,.18), transparent 32%),
+      radial-gradient(circle at 50% 100%, rgba(255,79,216,.2), transparent 35%),
+      var(--bg);
+    font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  body:before{
+    content:"";
+    position:fixed; inset:0;
+    pointer-events:none;
+    background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+    background-size:34px 34px;
+    mask-image:linear-gradient(to bottom,rgba(0,0,0,.8),transparent);
+  }
+  .wrap{width:min(1180px,92vw);margin:auto}
+  .hero{
+    padding:64px 0 34px;
+    position:relative;
+  }
+  .eyebrow{
+    display:inline-flex;gap:10px;align-items:center;
+    padding:8px 13px;border:1px solid rgba(255,255,255,.16);
+    background:rgba(255,255,255,.06);
+    border-radius:999px;color:var(--cyan);font-weight:800;font-size:.83rem;
+    letter-spacing:.11em;text-transform:uppercase;
+  }
+  h1{
+    font-size:clamp(2.5rem,7vw,6rem);
+    line-height:.9;margin:22px 0 16px;
+    letter-spacing:-.06em;
+    max-width:900px;
+  }
+  .gradient{
+    background:linear-gradient(90deg,var(--pink),var(--cyan),var(--lime),var(--gold));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 16px rgba(255,79,216,.25));
+  }
+  .subtitle{max-width:790px;color:var(--muted);font-size:1.1rem;line-height:1.7}
+  .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+  button,.btn{
+    appearance:none;border:0;cursor:pointer;
+    border-radius:14px;padding:13px 18px;font-weight:900;
+    font-size:.98rem;transition:.2s transform,.2s filter,.2s box-shadow;
+  }
+  button:hover,.btn:hover{transform:translateY(-2px);filter:brightness(1.06)}
+  .primary{color:#13091a;background:linear-gradient(135deg,var(--pink),var(--gold));box-shadow:var(--shadow)}
+  .secondary{color:var(--text);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14)}
+  .top-grid{display:grid;grid-template-columns:1.4fr .9fr;gap:18px;margin-bottom:30px}
+  .card{
+    background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.035));
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow:0 18px 60px rgba(0,0,0,.28);
+    border-radius:24px;padding:22px;
+    backdrop-filter:blur(10px);
+  }
+  .card h2,.card h3{margin-top:0}
+  .mini-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px}
+  .mini{
+    background:#120d21;border:1px solid rgba(255,255,255,.1);
+    border-radius:16px;padding:14px;text-align:center;
+  }
+  .mini .icon{font-size:1.7rem}
+  .mini b{display:block;font-size:.82rem;margin-top:4px}
+  .badge-bar{
+    position:sticky;top:0;z-index:50;
+    border-top:1px solid rgba(255,255,255,.08);
+    border-bottom:1px solid rgba(255,255,255,.12);
+    background:rgba(9,6,17,.88);
+    backdrop-filter:blur(16px);
+    box-shadow:0 8px 28px rgba(0,0,0,.25);
+  }
+  .badge-inner{width:min(1180px,92vw);margin:auto;display:flex;gap:12px;align-items:center;padding:10px 0;overflow:auto}
+  .badge-label{font-size:.8rem;font-weight:900;color:var(--gold);white-space:nowrap;text-transform:uppercase;letter-spacing:.09em}
+  .badge-chip{
+    min-width:max-content;display:flex;align-items:center;gap:7px;
+    padding:8px 11px;border-radius:999px;
+    border:1px solid rgba(255,255,255,.11);
+    background:rgba(255,255,255,.05);
+    color:#766e86;filter:grayscale(1);opacity:.55;
+    transition:.25s;
+    font-size:.83rem;font-weight:800;
+  }
+  .badge-chip.unlocked{
+    color:#140d1d;filter:none;opacity:1;
+    background:linear-gradient(135deg,var(--gold),var(--lime));
+    box-shadow:0 0 18px rgba(255,215,94,.35);
+  }
+  .survey-shell{display:grid;grid-template-columns:1fr 320px;gap:20px;padding:34px 0 80px}
+  .progress-wrap{margin-bottom:18px}
+  .progress-meta{display:flex;justify-content:space-between;color:var(--muted);font-size:.9rem;margin-bottom:8px}
+  .progress{height:13px;border-radius:999px;background:#211837;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+  .progress > span{height:100%;display:block;width:0;background:linear-gradient(90deg,var(--pink),var(--cyan),var(--lime));transition:.35s}
+  .question-card{display:none;animation:pop .35s ease}
+  .question-card.active{display:block}
+  @keyframes pop{from{opacity:0;transform:translateY(12px) scale(.99)}to{opacity:1;transform:none}}
+  .qnum{font-size:.82rem;color:var(--cyan);font-weight:900;text-transform:uppercase;letter-spacing:.11em}
+  .question{font-size:clamp(1.3rem,2.3vw,2rem);line-height:1.25;margin:10px 0 18px}
+  .answers{display:grid;gap:12px}
+  .answer{
+    width:100%;text-align:left;color:var(--text);
+    background:linear-gradient(180deg,#21163b,#171126);
+    border:1px solid rgba(255,255,255,.12);
+    padding:17px 18px;border-radius:18px;
+    display:flex;gap:12px;align-items:flex-start;
+  }
+  .answer:hover{border-color:var(--pink);box-shadow:0 0 20px rgba(255,79,216,.16)}
+  .answer.selected{outline:2px solid var(--cyan);background:linear-gradient(180deg,#283458,#171126)}
+  .letter{
+    min-width:30px;height:30px;border-radius:10px;display:grid;place-items:center;
+    font-size:.8rem;background:rgba(255,255,255,.08);color:var(--gold)
+  }
+  .nav{display:flex;justify-content:space-between;gap:10px;margin-top:18px}
+  .side{position:sticky;top:78px;height:max-content}
+  .trait-row{margin:13px 0}
+  .trait-top{display:flex;justify-content:space-between;font-size:.84rem;color:var(--muted);margin-bottom:5px}
+  .traitbar{height:8px;border-radius:99px;background:#211837;overflow:hidden}
+  .traitbar span{display:block;height:100%;width:8%;background:linear-gradient(90deg,var(--purple),var(--cyan));transition:.35s}
+  .tip{margin-top:18px;color:var(--muted);font-size:.9rem;line-height:1.55}
+  .result{display:none}
+  .result.show{display:block;animation:pop .5s ease}
+  .persona-card{
+    position:relative;overflow:hidden;text-align:center;
+    background:
+      radial-gradient(circle at 50% 20%,rgba(50,231,255,.18),transparent 35%),
+      linear-gradient(180deg,#241742,#120d21);
+  }
+  .persona-emoji{font-size:5rem;filter:drop-shadow(0 0 18px rgba(255,255,255,.2))}
+  .persona-title{font-size:clamp(2rem,5vw,4.3rem);line-height:.95;margin:10px 0}
+  .persona-tag{color:var(--gold);font-weight:900;font-size:1.08rem}
+  .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+  .result-list{padding-left:18px;line-height:1.8;color:var(--muted)}
+  .big-badges{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:18px 0 2px}
+  .big-badge{
+    background:linear-gradient(135deg,var(--gold),var(--lime));color:#151020;
+    border-radius:16px;padding:12px 14px;font-weight:900;box-shadow:0 0 18px rgba(255,215,94,.24)
+  }
+  .personas{padding:20px 0 70px}
+  .persona-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .persona-mini{min-height:180px}
+  .persona-mini .em{font-size:2.4rem}
+  .persona-mini p{color:var(--muted);font-size:.9rem;line-height:1.5}
+  footer{padding:30px 0 60px;color:#8e83a4;text-align:center;font-size:.88rem}
+  .spark{
+    position:absolute;width:260px;height:260px;border-radius:50%;
+    border:1px solid rgba(255,255,255,.08);right:-100px;top:-120px;
+    box-shadow:0 0 50px rgba(255,79,216,.18) inset;
+  }
+  @media(max-width:900px){
+    .top-grid,.survey-shell,.result-grid{grid-template-columns:1fr}
+    .side{position:static}
+    .persona-grid{grid-template-columns:repeat(2,1fr)}
+  }
+  @media(max-width:600px){
+    .mini-grid{grid-template-columns:repeat(2,1fr)}
+    .persona-grid{grid-template-columns:1fr}
+    .hero{padding-top:42px}
+    .card{padding:17px;border-radius:20px}
+    .answer{padding:15px}
+  }
+</style>
+</head>
+<body>
+  <section class="hero">
+    <div class="wrap">
+      <span class="eyebrow">⚔ Spirit Snack Squad Assessment</span>
+      <h1>Discover your <span class="gradient">learning superpower.</span></h1>
+      <p class="subtitle">
+        Take on real school-life missions, unlock strength badges, and reveal your Singapore-inspired student persona.
+        There are no “bad” results—each profile highlights strengths and one growth quest.
+      </p>
+      <div class="hero-actions">
+        <a class="btn primary" href="#survey">Start the Mission</a>
+        <button class="secondary" onclick="resetSurvey()">Reset Progress</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="badge-bar">
+    <div class="badge-inner" id="badgeBar">
+      <span class="badge-label">Unlocked Badges</span>
+    </div>
+  </div>
+
+  <main class="wrap">
+    <section class="top-grid">
+      <div class="card">
+        <h2>Your Strength Map</h2>
+        <p class="subtitle" style="font-size:.97rem">
+          Your choices build a profile across eight traits. Answer honestly based on what you usually do—not what sounds ideal.
+        </p>
+        <div class="mini-grid">
+          <div class="mini"><span class="icon">🛡️</span><b>Resilience</b></div>
+          <div class="mini"><span class="icon">🔎</span><b>Curiosity</b></div>
+          <div class="mini"><span class="icon">🎯</span><b>Focus</b></div>
+          <div class="mini"><span class="icon">🤝</span><b>Teamwork</b></div>
+          <div class="mini"><span class="icon">🧭</span><b>Independence</b></div>
+          <div class="mini"><span class="icon">💡</span><b>Creativity</b></div>
+          <div class="mini"><span class="icon">🚀</span><b>Courage</b></div>
+          <div class="mini"><span class="icon">🪞</span><b>Reflection</b></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Mission Rules</h3>
+        <p class="tip">✅ Choose the answer closest to your usual behaviour.</p>
+        <p class="tip">✅ Your progress and badges are saved on this device.</p>
+        <p class="tip">✅ Finish all missions to unlock your persona.</p>
+      </div>
+    </section>
+
+    <section id="survey" class="survey-shell">
+      <div>
+        <div class="progress-wrap">
+          <div class="progress-meta"><span id="progressText">Mission 1 of 24</span><span id="percentText">0%</span></div>
+          <div class="progress"><span id="progressBar"></span></div>
+        </div>
+
+        <div id="questionsHost"></div>
+
+        <section id="result" class="result">
+          <div class="card persona-card">
+            <div class="spark"></div>
+            <div class="qnum">Persona Unlocked</div>
+            <div class="persona-emoji" id="resultEmoji">🍇</div>
+            <h2 class="persona-title gradient" id="resultTitle">Resilient Raisin Muffin</h2>
+            <div class="persona-tag" id="resultTag">“I may stumble, but I always bounce back.”</div>
+            <p class="subtitle" style="margin:18px auto 0" id="resultDesc"></p>
+            <div class="big-badges" id="resultBadges"></div>
+          </div>
+
+          <div class="result-grid">
+            <div class="card">
+              <h3>⚡ Your Superpowers</h3>
+              <ul class="result-list" id="strengthList"></ul>
+            </div>
+            <div class="card">
+              <h3>🌱 Your Growth Quest</h3>
+              <ul class="result-list" id="growthList"></ul>
+            </div>
+          </div>
+          <div class="card" style="margin-top:16px">
+            <h3>📚 Recommended Study Moves</h3>
+            <ul class="result-list" id="studyList"></ul>
+            <button class="primary" onclick="resetSurvey()">Retake Survey</button>
+          </div>
+        </section>
+      </div>
+
+      <aside class="card side">
+        <h3>Live Strength Scanner</h3>
+        <div id="traitPanel"></div>
+        <p class="tip">Your bars update after each answer. This is only a guide, not a label.</p>
+      </aside>
+    </section>
+
+    <section class="personas">
+      <h2>Meet the 8 Snack Squad Personas</h2>
+      <div class="persona-grid" id="personaGrid"></div>
+    </section>
+  </main>
+
+  <footer>Built for students aged 13–18 • Positive, strengths-based, and made for reflection</footer>
+
+<script>
+const traits = ["resilience","curiosity","focus","teamwork","independence","creativity","courage","reflection"];
+
+const badgeDefs = {
+  resilience:{name:"Never Give Up",icon:"🛡️"},
+  curiosity:{name:"Question Master",icon:"🔎"},
+  focus:{name:"Focus Champion",icon:"🎯"},
+  teamwork:{name:"Team Player",icon:"🤝"},
+  independence:{name:"Self-Starter",icon:"🧭"},
+  creativity:{name:"Idea Generator",icon:"💡"},
+  courage:{name:"Brave Learner",icon:"🚀"},
+  reflection:{name:"Reflective Thinker",icon:"🪞"}
+};
+
+const personas = {
+  resilience:{
+    name:"Resilient Raisin Muffin",emoji:"🍇",
+    tag:"“I may stumble, but I always bounce back.”",
+    desc:"You keep going when learning gets difficult. Setbacks become fuel for your next attempt.",
+    strengths:["Persistent during difficult tasks","Learns from mistakes","Able to recover after disappointing results"],
+    growth:["Pause before pushing too hard","Celebrate small improvements","Ask for help before frustration builds"],
+    study:["Use an error log after tests","Set small improvement targets","Track progress across several attempts"]
+  },
+  curiosity:{
+    name:"Curious Coconut Tart",emoji:"🥥",
+    tag:"“I always want to know why.”",
+    desc:"You enjoy discovering how ideas connect. Questions and new possibilities energise you.",
+    strengths:["Asks meaningful questions","Connects ideas across topics","Enjoys exploring beyond the textbook"],
+    growth:["Stay on task when side topics appear","Turn questions into clear action steps","Avoid overthinking simple tasks"],
+    study:["Use concept maps","Research one extension question per topic","Explain why each method works"]
+  },
+  focus:{
+    name:"Focused Pineapple Puff",emoji:"🍍",
+    tag:"“I finish what I start.”",
+    desc:"You work steadily and reliably. Clear goals help you stay locked in and complete your mission.",
+    strengths:["Sustains attention","Follows through on tasks","Creates dependable routines"],
+    growth:["Stay flexible when plans change","Take breaks before focus becomes fatigue","Accept that perfect is not always necessary"],
+    study:["Use timed focus sessions","Break work into checkpoints","Keep a weekly task board"]
+  },
+  teamwork:{
+    name:"Bubble Tea Booster",emoji:"🧋",
+    tag:"“Together, we level up.”",
+    desc:"You bring energy to groups and help others feel included. Discussion often strengthens your learning.",
+    strengths:["Encourages classmates","Communicates ideas clearly","Builds positive team energy"],
+    growth:["Protect your own focus","Speak up when you disagree","Practise working independently too"],
+    study:["Use peer teaching","Form a small study team","Take turns summarising group discussions"]
+  },
+  courage:{
+    name:"Brave Curry Puff",emoji:"🥟",
+    tag:"“Courage comes before confidence.”",
+    desc:"You are willing to try, answer, and take initiative—even when success is not guaranteed.",
+    strengths:["Takes healthy learning risks","Volunteers ideas","Acts with confidence under uncertainty"],
+    growth:["Slow down before answering","Check accuracy after bold attempts","Listen fully before taking charge"],
+    study:["Attempt questions before viewing examples","Use a check-your-work routine","Practise speaking through solutions"]
+  },
+  independence:{
+    name:"Laksa Pathfinder",emoji:"🍜",
+    tag:"“I find my own way.”",
+    desc:"You are resourceful and self-directed. You like solving problems with your own tools and methods.",
+    strengths:["Works without constant reminders","Finds useful resources","Takes ownership of progress"],
+    growth:["Ask for help earlier","Share your thinking with others","Avoid carrying every task alone"],
+    study:["Create personal study goals","Choose resources deliberately","Schedule quick teacher check-ins"]
+  },
+  creativity:{
+    name:"Ice Kachang Inventor",emoji:"🍧",
+    tag:"“There is always another way.”",
+    desc:"You bring fresh angles to tasks. Variety, imagination, and experimentation help you learn.",
+    strengths:["Generates original ideas","Adapts methods","Sees multiple possible solutions"],
+    growth:["Complete routine practice too","Organise ideas before presenting","Choose one idea and develop it fully"],
+    study:["Use visuals and analogies","Create your own examples","Compare two solution methods"]
+  },
+  reflection:{
+    name:"Kaya Toast Strategist",emoji:"🍞",
+    tag:"“Plan, check, improve.”",
+    desc:"You think carefully about what works. Reflection helps you make smart adjustments.",
+    strengths:["Reviews performance thoughtfully","Plans before acting","Notices patterns in mistakes"],
+    growth:["Avoid planning forever","Try before you feel fully ready","Use reflection to act, not worry"],
+    study:["Keep a short learning journal","Review errors weekly","Set one next-step action after each task"]
+  }
+};
+
+const questions = [
+  {
+    q:"You receive a lower mark than expected for a Maths test. What do you do first?",
+    a:[
+      ["Review my mistakes and try similar questions again",{resilience:3,reflection:2}],
+      ["Ask why the method works and look for another explanation",{curiosity:3,reflection:1}],
+      ["Create a plan for the next test",{focus:3,reflection:1}],
+      ["Discuss the paper with classmates",{teamwork:3,curiosity:1}]
+    ]
+  },
+  {
+    q:"Your project group is stuck and nobody knows what to do next.",
+    a:[
+      ["Encourage everyone and organise a quick discussion",{teamwork:3,courage:1}],
+      ["Suggest an unusual new direction",{creativity:3,courage:1}],
+      ["Break the task into smaller steps",{focus:3,reflection:1}],
+      ["Take one part and start working independently",{independence:3,resilience:1}]
+    ]
+  },
+  {
+    q:"A teacher introduces a difficult topic you have never seen before.",
+    a:[
+      ["Search for videos or examples after class",{curiosity:3,independence:2}],
+      ["Try a question immediately, even if I might be wrong",{courage:3,resilience:1}],
+      ["Listen carefully and note the key steps",{focus:3,reflection:1}],
+      ["Ask a friend to compare understanding",{teamwork:3,curiosity:1}]
+    ]
+  },
+  {
+    q:"You have three assignments due in the same week.",
+    a:[
+      ["Make a schedule and rank them by urgency",{focus:3,reflection:2}],
+      ["Start with the hardest one",{resilience:3,courage:1}],
+      ["Coordinate study time with friends",{teamwork:3,focus:1}],
+      ["Choose the one that sparks the most ideas first",{creativity:3,curiosity:1}]
+    ]
+  },
+  {
+    q:"You answer a question wrongly in front of the class.",
+    a:[
+      ["Laugh it off and try again later",{resilience:3,courage:1}],
+      ["Ask what part of my thinking went wrong",{reflection:3,curiosity:1}],
+      ["Volunteer another answer soon after",{courage:3,resilience:1}],
+      ["Listen to how classmates solved it",{teamwork:2,reflection:2}]
+    ]
+  },
+  {
+    q:"You are given an open-ended task with very few instructions.",
+    a:[
+      ["Create my own plan and get started",{independence:3,courage:1}],
+      ["Brainstorm many possible approaches",{creativity:3,curiosity:1}],
+      ["Ask questions to understand the goal",{curiosity:3,reflection:1}],
+      ["Check what others are thinking first",{teamwork:3,reflection:1}]
+    ]
+  },
+  {
+    q:"Your usual study method is not helping you remember information.",
+    a:[
+      ["Keep adjusting until I find something that works",{resilience:3,reflection:2}],
+      ["Invent a game, story, or visual method",{creativity:3,curiosity:1}],
+      ["Ask friends what methods work for them",{teamwork:3,curiosity:1}],
+      ["Track which method gives the best results",{reflection:3,focus:1}]
+    ]
+  },
+  {
+    q:"You have a free period before an important test.",
+    a:[
+      ["Review my weakest topic",{focus:3,reflection:2}],
+      ["Quiz a friend and let them quiz me",{teamwork:3,curiosity:1}],
+      ["Try the most challenging question I can find",{courage:2,resilience:2}],
+      ["Choose my own resources and study quietly",{independence:3,focus:1}]
+    ]
+  },
+  {
+    q:"A classmate disagrees with your idea during a discussion.",
+    a:[
+      ["Ask them to explain their reasoning",{curiosity:2,teamwork:2}],
+      ["Compare both ideas and improve mine",{reflection:3,creativity:1}],
+      ["Defend my view confidently but respectfully",{courage:3,teamwork:1}],
+      ["Suggest combining the strongest parts",{creativity:2,teamwork:2}]
+    ]
+  },
+  {
+    q:"You must prepare for a presentation.",
+    a:[
+      ["Rehearse until the flow feels clear",{focus:3,resilience:1}],
+      ["Design a memorable and creative format",{creativity:3,courage:1}],
+      ["Practise with a friend and ask for feedback",{teamwork:3,reflection:1}],
+      ["Research deeply so I can answer questions",{curiosity:3,independence:1}]
+    ]
+  },
+  {
+    q:"A long homework task feels boring.",
+    a:[
+      ["Set mini-targets and finish one section at a time",{focus:3,resilience:2}],
+      ["Turn it into a personal challenge",{courage:2,resilience:2}],
+      ["Find a more interesting way to approach it",{creativity:3,curiosity:1}],
+      ["Work alongside someone to stay motivated",{teamwork:3,focus:1}]
+    ]
+  },
+  {
+    q:"You notice that you keep making the same mistake.",
+    a:[
+      ["Write down why it happens and how to prevent it",{reflection:3,focus:1}],
+      ["Practise until the mistake becomes less common",{resilience:3,focus:1}],
+      ["Ask someone to observe my method",{teamwork:2,reflection:2}],
+      ["Try a completely different method",{creativity:3,courage:1}]
+    ]
+  },
+  {
+    q:"Your team has very different working styles.",
+    a:[
+      ["Help everyone agree on roles",{teamwork:3,focus:1}],
+      ["Adapt my style to what the team needs",{reflection:2,teamwork:2}],
+      ["Take responsibility for the part I can control",{independence:3,resilience:1}],
+      ["Suggest a flexible system with several options",{creativity:3,teamwork:1}]
+    ]
+  },
+  {
+    q:"You are unsure whether your answer is correct.",
+    a:[
+      ["Submit it confidently after one final check",{courage:3,reflection:1}],
+      ["Test it using another method",{curiosity:2,reflection:2}],
+      ["Ask a classmate to compare",{teamwork:3,reflection:1}],
+      ["Keep working until I can justify every step",{focus:2,resilience:2}]
+    ]
+  },
+  {
+    q:"You are starting a month-long assignment.",
+    a:[
+      ["Set milestones from the beginning",{focus:3,reflection:1}],
+      ["Explore several ideas before choosing",{creativity:3,curiosity:1}],
+      ["Decide what I can manage on my own",{independence:3,reflection:1}],
+      ["Find people whose strengths complement mine",{teamwork:3,reflection:1}]
+    ]
+  },
+  {
+    q:"A lesson moves faster than you expected.",
+    a:[
+      ["Mark confusing parts and review them later",{reflection:3,focus:1}],
+      ["Ask a question even if others seem to understand",{courage:3,curiosity:1}],
+      ["Keep listening and piece it together",{resilience:2,focus:2}],
+      ["Compare notes with a friend after class",{teamwork:3,reflection:1}]
+    ]
+  },
+  {
+    q:"You are given feedback that feels harsh.",
+    a:[
+      ["Separate the useful advice from the tone",{reflection:3,resilience:1}],
+      ["Use it as motivation to improve",{resilience:3,courage:1}],
+      ["Ask for a clearer example",{curiosity:2,courage:2}],
+      ["Talk it through with someone I trust",{teamwork:3,reflection:1}]
+    ]
+  },
+  {
+    q:"You finish a task earlier than expected.",
+    a:[
+      ["Check and improve the quality",{reflection:3,focus:1}],
+      ["Help someone who is still working",{teamwork:3,resilience:1}],
+      ["Try an extension challenge",{curiosity:3,courage:1}],
+      ["Create a new version in my own style",{creativity:3,independence:1}]
+    ]
+  },
+  {
+    q:"You need to learn something outside school.",
+    a:[
+      ["Teach myself using online resources",{independence:3,curiosity:2}],
+      ["Find someone experienced and ask questions",{teamwork:2,curiosity:2}],
+      ["Set a goal and practise regularly",{focus:3,resilience:1}],
+      ["Experiment until I discover what works",{creativity:2,courage:2}]
+    ]
+  },
+  {
+    q:"Your group receives praise for a successful project.",
+    a:[
+      ["Celebrate everyone’s contribution",{teamwork:3,reflection:1}],
+      ["Think about what made the project work",{reflection:3,focus:1}],
+      ["Look for an even bigger challenge next time",{courage:2,resilience:2}],
+      ["Imagine how we could make it more original",{creativity:3,curiosity:1}]
+    ]
+  },
+  {
+    q:"A difficult question has several possible solutions.",
+    a:[
+      ["Compare which solution is most efficient",{reflection:2,focus:2}],
+      ["Explore as many solutions as possible",{creativity:3,curiosity:2}],
+      ["Choose one and explain it confidently",{courage:3,independence:1}],
+      ["Discuss the solutions with others",{teamwork:3,curiosity:1}]
+    ]
+  },
+  {
+    q:"You lose motivation halfway through revision.",
+    a:[
+      ["Return to my reason for wanting to improve",{resilience:3,reflection:1}],
+      ["Switch to a different activity or method",{creativity:2,independence:2}],
+      ["Message a friend for encouragement",{teamwork:3,resilience:1}],
+      ["Use a timer and complete one short round",{focus:3,resilience:1}]
+    ]
+  },
+  {
+    q:"A teacher asks for volunteers to lead an activity.",
+    a:[
+      ["Volunteer even if I feel nervous",{courage:3,resilience:1}],
+      ["Offer to organise the steps",{focus:2,teamwork:2}],
+      ["Suggest a creative format",{creativity:3,courage:1}],
+      ["Support the leader and help the group",{teamwork:3,reflection:1}]
+    ]
+  },
+  {
+    q:"At the end of a busy school week, what feels most satisfying?",
+    a:[
+      ["Knowing I did not give up",{resilience:3,courage:1}],
+      ["Discovering something new",{curiosity:3,creativity:1}],
+      ["Completing everything I planned",{focus:3,independence:1}],
+      ["Helping people succeed together",{teamwork:3,reflection:1}]
+    ]
+  }
+];
+
+let current = 0;
+let answers = Array(questions.length).fill(null);
+let scores = Object.fromEntries(traits.map(t=>[t,0]));
+
+function save(){
+  localStorage.setItem("spiritSnackSurvey", JSON.stringify({current,answers,scores}));
+}
+function load(){
+  const raw = localStorage.getItem("spiritSnackSurvey");
+  if(!raw) return;
+  try{
+    const data = JSON.parse(raw);
+    if(Array.isArray(data.answers) && data.answers.length===questions.length){
+      current = Math.min(data.current||0, questions.length-1);
+      answers = data.answers;
+      recalc();
+    }
+  }catch(e){}
+}
+function recalc(){
+  scores = Object.fromEntries(traits.map(t=>[t,0]));
+  answers.forEach((choice,qi)=>{
+    if(choice===null) return;
+    const pts = questions[qi].a[choice][1];
+    Object.entries(pts).forEach(([k,v])=>scores[k]+=v);
+  });
+}
+function renderBadges(){
+  const bar=document.getElementById("badgeBar");
+  bar.innerHTML='<span class="badge-label">Unlocked Badges</span>';
+  const max = Math.max(...Object.values(scores),1);
+  traits.forEach(t=>{
+    const unlocked = scores[t]>=10;
+    const d=badgeDefs[t];
+    const el=document.createElement("div");
+    el.className="badge-chip"+(unlocked?" unlocked":"");
+    el.innerHTML=`<span>${d.icon}</span><span>${d.name}</span>`;
+    el.title=unlocked?`Unlocked with ${scores[t]} points`:"Keep answering to unlock";
+    bar.appendChild(el);
+  });
+}
+function renderTraits(){
+  const panel=document.getElementById("traitPanel");
+  const max=Math.max(...Object.values(scores),12);
+  panel.innerHTML="";
+  traits.forEach(t=>{
+    const d=badgeDefs[t];
+    const pct=Math.min(100,Math.round(scores[t]/max*100));
+    panel.innerHTML+=`
+      <div class="trait-row">
+        <div class="trait-top"><span>${d.icon} ${t[0].toUpperCase()+t.slice(1)}</span><b>${scores[t]}</b></div>
+        <div class="traitbar"><span style="width:${Math.max(6,pct)}%"></span></div>
+      </div>`;
+  });
+}
+function renderQuestions(){
+  const host=document.getElementById("questionsHost");
+  host.innerHTML="";
+  questions.forEach((item,qi)=>{
+    const div=document.createElement("article");
+    div.className="card question-card"+(qi===current?" active":"");
+    div.innerHTML=`
+      <div class="qnum">Mission ${qi+1}</div>
+      <h2 class="question">${item.q}</h2>
+      <div class="answers">
+        ${item.a.map((ans,ai)=>`
+          <button class="answer ${answers[qi]===ai?"selected":""}" onclick="chooseAnswer(${qi},${ai})">
+            <span class="letter">${String.fromCharCode(65+ai)}</span>
+            <span>${ans[0]}</span>
+          </button>`).join("")}
+      </div>
+      <div class="nav">
+        <button class="secondary" onclick="prevQuestion()" ${qi===0?"disabled":""}>← Previous</button>
+        <button class="primary" onclick="nextQuestion()">${qi===questions.length-1?"Reveal Persona":"Next Mission →"}</button>
+      </div>`;
+    host.appendChild(div);
+  });
+}
+function chooseAnswer(qi,ai){
+  answers[qi]=ai;
+  recalc();
+  renderQuestions();
+  renderTraits();
+  renderBadges();
+  updateProgress();
+  save();
+}
+function nextQuestion(){
+  if(answers[current]===null){
+    alert("Choose the option closest to what you would usually do.");
+    return;
+  }
+  if(current<questions.length-1){
+    current++;
+    renderQuestions();
+    updateProgress();
+    save();
+    document.getElementById("survey").scrollIntoView({behavior:"smooth",block:"start"});
+  }else{
+    showResult();
+  }
+}
+function prevQuestion(){
+  if(current>0){
+    current--;
+    renderQuestions();
+    updateProgress();
+    save();
+  }
+}
+function updateProgress(){
+  const completed=answers.filter(v=>v!==null).length;
+  const pct=Math.round(completed/questions.length*100);
+  document.getElementById("progressBar").style.width=pct+"%";
+  document.getElementById("progressText").textContent=`Mission ${Math.min(current+1,questions.length)} of ${questions.length}`;
+  document.getElementById("percentText").textContent=pct+"%";
+}
+function showResult(){
+  if(answers.some(v=>v===null)){
+    const first=answers.findIndex(v=>v===null);
+    current=first;renderQuestions();updateProgress();
+    alert("Complete every mission before revealing your persona.");
+    return;
+  }
+  const sorted=[...traits].sort((a,b)=>scores[b]-scores[a]);
+  const top=sorted[0];
+  const p=personas[top];
+  document.getElementById("questionsHost").style.display="none";
+  document.querySelector(".progress-wrap").style.display="none";
+  const result=document.getElementById("result");
+  result.classList.add("show");
+  document.getElementById("resultEmoji").textContent=p.emoji;
+  document.getElementById("resultTitle").textContent=p.name;
+  document.getElementById("resultTag").textContent=p.tag;
+  document.getElementById("resultDesc").textContent=p.desc;
+  fillList("strengthList",p.strengths);
+  fillList("growthList",p.growth);
+  fillList("studyList",p.study);
+  const badgeBox=document.getElementById("resultBadges");
+  badgeBox.innerHTML="";
+  sorted.slice(0,3).forEach(t=>{
+    const b=badgeDefs[t];
+    badgeBox.innerHTML+=`<div class="big-badge">${b.icon} ${b.name}</div>`;
+  });
+  localStorage.setItem("spiritSnackFinalPersona",top);
+  save();
+  result.scrollIntoView({behavior:"smooth",block:"start"});
+}
+function fillList(id,items){
+  document.getElementById(id).innerHTML=items.map(x=>`<li>${x}</li>`).join("");
+}
+function resetSurvey(){
+  localStorage.removeItem("spiritSnackSurvey");
+  localStorage.removeItem("spiritSnackFinalPersona");
+  current=0;answers=Array(questions.length).fill(null);recalc();
+  document.getElementById("questionsHost").style.display="";
+  document.querySelector(".progress-wrap").style.display="";
+  document.getElementById("result").classList.remove("show");
+  renderQuestions();renderTraits();renderBadges();updateProgress();
+  location.hash="#survey";
+}
+function renderPersonas(){
+  const grid=document.getElementById("personaGrid");
+  grid.innerHTML=Object.values(personas).map(p=>`
+    <div class="card persona-mini">
+      <div class="em">${p.emoji}</div>
+      <h3>${p.name}</h3>
+      <p>${p.desc}</p>
+    </div>`).join("");
+}
+load();
+renderQuestions();
+renderTraits();
+renderBadges();
+renderPersonas();
+updateProgress();
+
+if(localStorage.getItem("spiritSnackFinalPersona") && answers.every(v=>v!==null)){
+  setTimeout(showResult,250);
+}
+</script>
+</body>
+</html>
